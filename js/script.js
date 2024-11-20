@@ -151,6 +151,23 @@ const testRemoveTime = (times, delay) => {
 const onCountdownEnd = () => {
     logMessage('Timer', "Timer has ended");
     timeText.style.color = "green";
-    let audio = new Audio("celebration.mp3");
-    audio.play();
+
+    // Check if celebration.mp3 exists
+    const audioFile = "celebration.mp3";
+    fetch(audioFile)
+        .then(response => {
+            if (response.ok) {
+                // File exists, play the audio
+                let audio = new Audio(audioFile);
+                audio.play();
+            } else {
+                // File doesn't exist, log an error or handle it
+                logMessage('Timer', "Celebration audio file not found. No audio playing.");
+            }
+        })
+        .catch(error => {
+            // Handle errors in fetching the file (e.g., network issues)
+            logMessage('Timer', "Error checking for celebration audio: " + error.message);
+        });
 };
+
