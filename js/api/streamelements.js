@@ -3,9 +3,10 @@ fetch('config.json')
     .then(response => response.json())
     .then(data => {
         config = data;
-        if (config.streamelements_token) {
-            initializeStreamElements(config.streamelements_token);
+        if (config.loginData.streamelements_token) {
+            initializeStreamElements(config.loginData.streamelements_token);
         } else {
+            logMessage("StreamElements", "Not Connected To StreamElements As No API Token Was Given!");
             return
         }
     })

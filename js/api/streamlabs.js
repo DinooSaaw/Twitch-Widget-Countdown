@@ -6,6 +6,7 @@ fetch('config.json')
         if (config.loginData.streamlabs_token) {
             initializeStreamlabs(config.loginData.streamlabs_token);
         } else {
+            logMessage("Streamlabs", "Not Connected To Streamlabs As No API Token Was Given!");
             return
         }
     })

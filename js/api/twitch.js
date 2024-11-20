@@ -9,7 +9,7 @@ fetch('config.json')
     .catch(err => console.error('Error loading config.json:', err));
 
 const initializeTwitchClient = () => {
-    if (config.twitch_channel_name !== "") {
+    if (config.loginData.twitch_channel_name !== "") {
         const client = new tmi.client({
             connection: {
                 reconnect: true,
@@ -103,6 +103,9 @@ const initializeTwitchClient = () => {
                 }
             }
         });
+    } else {
+        logMessage("Twitch", "Not Connected To Twitch As No Channel Was Given!");
+        return
     }
 };
 
