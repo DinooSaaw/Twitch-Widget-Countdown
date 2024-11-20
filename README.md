@@ -26,6 +26,8 @@ To add this countdown timer to OBS follow these steps:
 
 You can customize the timer, color scheme, and more by modifying the `config.js` and `style.css` files.
 
+You can customize the celebration sound effect by changing the file or removing the file
+
 ## Twitch Chat Commands
 
 Here are some chat commands that can interact with the timer (use the prefix defined in the config, e.g., `!` is used in this example):
@@ -35,7 +37,3 @@ Here are some chat commands that can interact with the timer (use the prefix def
   
 - **removetime [amount]**: Removes the specified amount of time from the countdown timer (in seconds).
     - Example: `!removetime 30` (removes 30 seconds).
-  
-- **timeleft**: Displays the current remaining time on the countdown timer.
-  
-- **reset**: Resets the timer to the starting time.
