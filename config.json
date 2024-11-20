@@ -1,0 +1,38 @@
+{
+    "loginData": {
+      "twitch_channel_name": "dinoosaaw",
+      "streamlabs_token": "",
+      "streamelements_token": ""
+    },
+    "initialCounterConfig": {
+      "initialHours": 1,
+      "initialMinutes": 0,
+      "initialSeconds": 0
+    },
+    "maxCounterTime": {
+      "maxHours": 0,
+      "maxMinutes": 0,
+      "maxSeconds": 0
+    },
+    "generalConfig": {
+      "twitch_command_prefix": "$",
+      "seconds_added_per_sub_prime": 30,
+      "seconds_added_per_sub_tier1": 30,
+      "seconds_added_per_sub_tier2": 60,
+      "seconds_added_per_sub_tier3": 120,
+      "seconds_added_per_resub_prime": 30,
+      "seconds_added_per_resub_tier1": 30,
+      "seconds_added_per_resub_tier2": 60,
+      "seconds_added_per_resub_tier3": 120,
+      "seconds_added_per_giftsub_tier1": 30,
+      "seconds_added_per_giftsub_tier2": 60,
+      "seconds_added_per_giftsub_tier3": 120,
+      "min_amount_of_bits": 500,
+      "seconds_added_per_bits": 30
+    },
+    "donationConfig": {
+      "min_donation_amount": 5,
+      "seconds_added_per_donation": 30
+    }
+  }
+  
