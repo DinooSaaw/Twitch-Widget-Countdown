@@ -1,11 +1,11 @@
 {
     "loginData": {
-      "twitch_channel_name": "dinoosaaw",
+      "twitch_channel_name": "",
       "streamlabs_token": "",
       "streamelements_token": ""
     },
     "initialCounterConfig": {
-      "initialHours": 1,
+      "initialHours": 6,
       "initialMinutes": 0,
       "initialSeconds": 0
     },
