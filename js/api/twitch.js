@@ -38,14 +38,22 @@ const initializeTwitchClient = () => {
                         PauseCountdown();
                         let pauseState = await GetPauseState();
                         if (pauseState) {
-                            logMessage("Twitch", `Timer Paused`);
+                            logMessage("Twitch", `Timer Has Paused Because ${displayName} Requested It`);
                         } else {
-                            logMessage("Twitch", `Timer Unpaused`);
+                            logMessage("Twitch", `Timer Has Unpaused Because ${displayName} Requested It`);
                         }
                     } else {
                         logMessage("Twitch", `Only Moderators Can Pause The Countdown`);
                     }
                     break;
+                    case "reset":
+                        if (isMod) {
+                            resetTimer();
+                            logMessage("Twitch", `Timer Has Been Reset Because ${displayName} Requested It`);
+                        } else {
+                            logMessage("Twitch", `Only Moderators Can Pause The Countdown`);
+                        }
+                        break;
                 case "add":
                     if (isMod) {
                         if (args[0] && !isNaN(args[0])) {

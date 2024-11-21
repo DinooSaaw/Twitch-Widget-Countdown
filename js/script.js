@@ -17,12 +17,26 @@ let pauseStartTime = null; // To track when the timer is paused
 let users = [];
 let time;
 
+// Save the ending time to localStorage
+const saveTimeToLocalStorage = () => {
+    localStorage.setItem('endingTime', endingTime.toISOString());
+};
+
+// Load the timer from localStorage (if available)
 const initializeCountdown = () => {
-    // Use config to initialize variables
-    endingTime = new Date(Date.now());
-    endingTime = timeFunc.addHours(endingTime, config.initialCounterConfig.initialHours);
-    endingTime = timeFunc.addMinutes(endingTime, config.initialCounterConfig.initialMinutes);
-    endingTime = timeFunc.addSeconds(endingTime, config.initialCounterConfig.initialSeconds);
+    // Check if there's a saved ending time in localStorage
+    const savedEndingTime = localStorage.getItem('endingTime');
+    
+    if (savedEndingTime) {
+        // Parse the stored ending time and use it
+        endingTime = new Date(savedEndingTime);
+    } else {
+        // If no saved ending time, initialize with the configured time
+        endingTime = new Date(Date.now());
+        endingTime = timeFunc.addHours(endingTime, config.initialCounterConfig.initialHours);
+        endingTime = timeFunc.addMinutes(endingTime, config.initialCounterConfig.initialMinutes);
+        endingTime = timeFunc.addSeconds(endingTime, config.initialCounterConfig.initialSeconds);
+    }
 
     // Start the countdown updater
     countdownUpdater = setInterval(() => {
@@ -47,6 +61,7 @@ const getNextTime = () => {
 
 let countdownUpdater;
 
+// Add time to the countdown
 const addTime = async (time, s) => {
     endingTime = timeFunc.addSeconds(time, s);
 
@@ -58,6 +73,8 @@ const addTime = async (time, s) => {
         let maxTime = timeFunc.getMilliseconds(new Date(Date.now()), maxHours, maxMinutes, maxSeconds);
         if (endingTime.getTime() > maxTime.getTime()) endingTime = maxTime;
     }
+
+    saveTimeToLocalStorage(); // Save the time to localStorage
 
     let addedTime = document.createElement("p");
     addedTime.classList = "addedTime";
@@ -77,6 +94,7 @@ const addTime = async (time, s) => {
     getNextTime();
 };
 
+// Remove time from the countdown
 const removeTime = async (time, s) => {
     endingTime = timeFunc.removeSeconds(time, s);
 
@@ -88,6 +106,8 @@ const removeTime = async (time, s) => {
         let maxTime = timeFunc.getMilliseconds(new Date(Date.now()), maxHours, maxMinutes, maxSeconds);
         if (endingTime.getTime() > maxTime.getTime()) endingTime = maxTime;
     }
+
+    saveTimeToLocalStorage(); // Save the time to localStorage
 
     let removedTime = document.createElement("p");
     removedTime.classList = "removedTime";
@@ -107,6 +127,7 @@ const removeTime = async (time, s) => {
     getNextTime();
 };
 
+// Pause the countdown
 const PauseCountdown = async () => {
     if (CountdownPaused) {
         // Resume: Calculate the pause duration and add it to endingTime
@@ -119,35 +140,18 @@ const PauseCountdown = async () => {
     CountdownPaused = !CountdownPaused;
 };
 
+// Get the pause state
 const GetPauseState = async () => {
     return CountdownPaused;
 };
 
-// Test Functions
-const testAddTime = (times, delay) => {
-    let addTimeInterval = setInterval(async () => {
-        if (times > 0) {
-            await sleep(randomInRange(50, delay - 50));
-            addTime(endingTime, 30);
-            --times;
-        } else {
-            clearInterval(addTimeInterval);
-        }
-    }, delay);
+// Reset the timer
+const resetTimer = () => {
+    localStorage.removeItem('endingTime'); // Remove saved time from localStorage
+    initializeCountdown(); // Reinitialize the timer
 };
 
-const testRemoveTime = (times, delay) => {
-    let addTimeInterval = setInterval(async () => {
-        if (times > 0) {
-            await sleep(randomInRange(50, delay - 50));
-            removeTime(endingTime, 30);
-            --times;
-        } else {
-            clearInterval(addTimeInterval);
-        }
-    }, delay);
-};
-
+// Handle when the countdown ends
 const onCountdownEnd = () => {
     logMessage('Timer', "Timer has ended");
     timeText.style.color = "green";
@@ -171,3 +175,27 @@ const onCountdownEnd = () => {
         });
 };
 
+// Test functions (optional)
+const testAddTime = (times, delay) => {
+    let addTimeInterval = setInterval(async () => {
+        if (times > 0) {
+            await sleep(randomInRange(50, delay - 50));
+            addTime(endingTime, 30);
+            --times;
+        } else {
+            clearInterval(addTimeInterval);
+        }
+    }, delay);
+};
+
+const testRemoveTime = (times, delay) => {
+    let addTimeInterval = setInterval(async () => {
+        if (times > 0) {
+            await sleep(randomInRange(50, delay - 50));
+            removeTime(endingTime, 30);
+            --times;
+        } else {
+            clearInterval(addTimeInterval);
+        }
+    }, delay);
+};

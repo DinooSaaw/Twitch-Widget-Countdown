@@ -14,6 +14,7 @@ A timer that increases when someone subscribes, gives bits on Twitch, or donates
 - **Gift Subscriptions**: Adds time when someone gifts a subscription.
 - **Donations**: Adds time when viewers donate money through StreamLabs or StreamElements.
 - **Bits**: Adds time when viewers donate bits on Twitch.
+- **Persistence**: The timer saves its time, allowing it to resume from where it left off if the timer is closed or reloaded.
 
 ## Add To OBS
 
@@ -37,3 +38,6 @@ Here are some chat commands that can interact with the timer (use the prefix def
   
 - **removetime [amount]**: Removes the specified amount of time from the countdown timer (in seconds).
     - Example: `!removetime 30` (removes 30 seconds).
+
+- **reset**: Resets the timer to the defined amount in the config.
+    - Example: !reset (resets timer to the default 6 hours, or the value specified in the config).
