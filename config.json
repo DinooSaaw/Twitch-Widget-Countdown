@@ -30,6 +30,9 @@
       "min_amount_of_bits": 500,
       "seconds_added_per_bits": 30
     },
+    "theme":{
+      "prefersDark": false
+    },
     "donationConfig": {
       "min_donation_amount": 5,
       "seconds_added_per_donation": 30

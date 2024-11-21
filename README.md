@@ -15,6 +15,7 @@ A timer that increases when someone subscribes, gives bits on Twitch, or donates
 - **Donations**: Adds time when viewers donate money through StreamLabs or StreamElements.
 - **Bits**: Adds time when viewers donate bits on Twitch.
 - **Persistence**: The timer saves its time, allowing it to resume from where it left off if the timer is closed or reloaded.
+- **Dark Theme**: The timer supports dark theme that can be easy be toggle between.
 
 ## Add To OBS
 
@@ -40,4 +41,7 @@ Here are some chat commands that can interact with the timer (use the prefix def
     - Example: `!removetime 30` (removes 30 seconds).
 
 - **reset**: Resets the timer to the defined amount in the config.
-    - Example: !reset (resets timer to the default 6 hours, or the value specified in the config).
+    - Example: `!reset` (resets timer to the default 6 hours, or the value specified in the config).
+
+- **toggletheme**: Toggles the theme between Light or Dark.
+    - Example: `!toggletheme` (Toggles the theme).

@@ -1,3 +1,4 @@
+/* Base styles for body and elements */
 body, body * {
     padding: 0;
     margin: 0;
@@ -9,16 +10,25 @@ body {
     height: 100vh;
 }
 
-
-
+/* Default light theme */
 :root {
     --background-color: #f7fff7;
     --shadow-color: #00000020;
     --text-color: #fea50a;
+    --button-background: #fff;
+    --button-text-color: #333;
 }
 
+/* Dark theme */
+[data-theme="dark"] {
+    --background-color: #2e2e2e;
+    --shadow-color: #00000060;
+    --text-color: #f7f7f7;
+    --button-background: #333;
+    --button-text-color: #fff;
+}
 
-
+/* Container styling */
 #container {
     position: absolute;
     top: 50%;
@@ -44,12 +54,6 @@ p {
     z-index: 1;
 }
 
-img {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-}
-
 canvas {
     width: 500px;
     height: 180px;
@@ -60,34 +64,48 @@ canvas {
     z-index: 2;
 }
 
-
-
-.addedTime {
+/* Theme Toggle Switch */
+.switch {
     position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    opacity: 0;
-    display: none;
-    z-index: 5;
-    font-weight: 400;
-    font-size: 3.25rem;
-    color: #82f282;
-    text-shadow: 0 0 1.5rem black;
-    transition: top 1s ease-out, opacity .5s ease-out;
+    top: 20px;
+    right: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 60px;
+    height: 30px;
+    background-color: var(--button-background);
+    border-radius: 20px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 2px; /* Added padding to ensure the circle stays within the bounds */
 }
 
-.removedTime {
+.switch::after {
+    content: "";
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background-color: var(--button-text-color);
+    transition: transform 0.3s ease, background-color 0.3s ease;
     position: absolute;
-    bottom: 50%;
-    left: 50%;
-    transform: translate(+50%, +50%);
-    opacity: 0;
-    display: none;
-    z-index: 5;
-    font-weight: 400;
-    font-size: 3.25rem;
-    color: #e62b0a;
-    text-shadow: 0 0 1.5rem black;
-    transition: bottom 1s ease-out, opacity .5s ease-out;
+    top: 50%;
+    left: 2px; /* Starts the circle on the left */
+    transform: translateY(-50%); /* Centers the circle vertically */
+}
+
+/* When the theme is dark, move the circle to the right */
+[data-theme="dark"] .switch::after {
+    transform: translateY(-50%) translateX(30px); /* Moves circle to the right */
+    background-color: #f7f7f7;
+}
+
+/* Smooth transitions for the switch */
+.switch:hover {
+    background-color: var(--button-text-color);
+}
+
+.switch:hover::after {
+    background-color: var(--background-color);
 }
