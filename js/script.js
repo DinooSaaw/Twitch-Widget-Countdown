@@ -13,8 +13,8 @@ const timeText = document.getElementById("timeText");
 let endingTime;
 let countdownEnded = false;
 let CountdownPaused = false;
-let pauseStartTime = null; // To track when the timer is paused
-let users = [];
+let pauseStartTime = null;
+let users = {};
 let time;
 
 // Save the ending time to localStorage
@@ -22,9 +22,7 @@ const saveTimeToLocalStorage = () => {
   localStorage.setItem("endingTime", endingTime.toISOString());
 };
 
-// Load the timer from localStorage (if available)
 const initializeCountdown = () => {
-  // Initialize theme
   setInitialTheme();
   // Check if there's a saved ending time in localStorage
   const savedEndingTime = localStorage.getItem("endingTime");
@@ -32,6 +30,26 @@ const initializeCountdown = () => {
   if (savedEndingTime) {
     // Parse the stored ending time and use it
     endingTime = new Date(savedEndingTime);
+    if (endingTime <= new Date()) {
+      logMessage(
+        "Timer",
+        "Saved ending time is in the past. Using default configuration."
+      );
+      localStorage.removeItem("endingTime"); // Clear invalid ending time
+      endingTime = new Date(Date.now());
+      endingTime = timeFunc.addHours(
+        endingTime,
+        config.initialCounterConfig.initialHours
+      );
+      endingTime = timeFunc.addMinutes(
+        endingTime,
+        config.initialCounterConfig.initialMinutes
+      );
+      endingTime = timeFunc.addSeconds(
+        endingTime,
+        config.initialCounterConfig.initialSeconds
+      );
+    }
   } else {
     // If no saved ending time, initialize with the configured time
     endingTime = new Date(Date.now());
@@ -242,10 +260,8 @@ const toggleTheme = () => {
   }
 };
 
-// Add event listener to the button
 themeToggleButton.addEventListener("click", toggleTheme);
 
-// Set the initial theme based on the system preference (optional)
 const setInitialTheme = () => {
   const prefersDark = config.theme.prefersDark;
   if (prefersDark) {
