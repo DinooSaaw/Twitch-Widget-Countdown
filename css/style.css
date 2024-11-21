@@ -109,3 +109,33 @@ canvas {
 .switch:hover::after {
     background-color: var(--background-color);
 }
+
+.addedTime {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    opacity: 0;
+    display: none;
+    z-index: 5;
+    font-weight: 400;
+    font-size: 3.25rem;
+    color: #82f282;
+    text-shadow: 0 0 1.5rem black;
+    transition: top 1s ease-out, opacity .5s ease-out;
+}
+
+.removedTime {
+    position: absolute;
+    bottom: 50%;
+    left: 50%;
+    transform: translate(+50%, +50%);
+    opacity: 0;
+    display: none;
+    z-index: 5;
+    font-weight: 400;
+    font-size: 3.25rem;
+    color: #e62b0a;
+    text-shadow: 0 0 1.5rem black;
+    transition: bottom 1s ease-out, opacity .5s ease-out;
+}

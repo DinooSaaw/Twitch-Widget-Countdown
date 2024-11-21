@@ -205,6 +205,31 @@ const onCountdownEnd = () => {
     });
 };
 
+// Test functions (optional)
+const testAddTime = (times, delay) => {
+  let addTimeInterval = setInterval(async () => {
+    if (times > 0) {
+      await sleep(randomInRange(50, delay - 50)); // Random delay before adding time
+      addTime(endingTime, 30); // Add 30 seconds
+      --times; // Decrease the times left
+    } else {
+      clearInterval(addTimeInterval); // Stop the interval when times reach 0
+    }
+  }, delay); // Delay between each time addition
+};
+
+const testRemoveTime = (times, delay) => {
+  let removeTimeInterval = setInterval(async () => {
+    if (times > 0) {
+      await sleep(randomInRange(50, delay - 50)); // Random delay before removing time
+      removeTime(endingTime, 30); // Remove 30 seconds
+      --times; // Decrease the times left
+    } else {
+      clearInterval(removeTimeInterval); // Stop the interval when times reach 0
+    }
+  }, delay); // Delay between each time removal
+};
+
 // Theme toggle functionality
 const themeToggleButton = document.getElementById("themeToggle");
 
