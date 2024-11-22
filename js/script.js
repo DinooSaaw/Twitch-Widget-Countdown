@@ -32,7 +32,8 @@ const initializeCountdown = () => {
   if (savedEndingTime) {
     // Parse the stored ending time and use it
     endingTime = new Date(savedEndingTime);
-    users = savedUserData
+    if (savedUserData) users = savedUserData
+    
     if (endingTime <= new Date()) {
       logMessage(
         "Timer",
