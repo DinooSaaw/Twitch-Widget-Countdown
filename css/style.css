@@ -23,7 +23,7 @@ body {
 [data-theme="dark"] {
     --background-color: #2e2e2e;
     --shadow-color: #00000060;
-    --text-color: #f7f7f7;
+    --text-color: #a7a7a7;
     --button-background: #333;
     --button-text-color: #fff;
 }
@@ -125,6 +125,13 @@ canvas {
     transition: top 1s ease-out, opacity .5s ease-out;
 }
 
+[data-theme="dark"] .addedTime {
+    color: #12b112;
+}
+
+[data-theme="dark"] .removedTime {
+    color: #881906;
+}
 .removedTime {
     position: absolute;
     bottom: 50%;

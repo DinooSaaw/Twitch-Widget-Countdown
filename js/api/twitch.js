@@ -25,25 +25,17 @@ const initializeTwitchClient = () => {
 
     client.on("message", async (channel, tags, message, self) => {
       let displayName = tags["display-name"];
-      let isMod = tags["mod"] || tags.badges.hasOwnProperty("broadcaster");
-
-      if (countdownEnded)
-        return logMessage(
-          "Twitch",
-          `Stopping Handling Chat Messages Because Countdown Ended`
-        );
+      let isMod = tags["mod"] || (tags["badges"] && tags["badges"].hasOwnProperty("broadcaster"));
 
       if (!message.startsWith(config.generalConfig["twitch_command_prefix"]))
-        return logMessage(
-          "Twitch",
-          `Ignoring Message As It's Not A Valid Command`
-        );
+        return;
 
       let msg = message.slice(1).trim().toLowerCase();
       let [command, ...args] = msg.trim().split(" ");
 
       switch (command) {
         case "pause":
+          if (countdownEnded) return
           if (isMod) {
             PauseCountdown();
             let pauseState = await GetPauseState();
@@ -87,6 +79,7 @@ const initializeTwitchClient = () => {
           }
           break;
         case "add":
+          if (countdownEnded) return
           if (isMod) {
             if (args[0] && !isNaN(args[0])) {
               addTime(endingTime, parseInt(args[0]));
@@ -105,6 +98,7 @@ const initializeTwitchClient = () => {
           }
           break;
         case "remove":
+          if (countdownEnded) return
           if (isMod) {
             if (args[0] && !isNaN(args[0])) {
               removeTime(endingTime, parseInt(args[0]));
@@ -125,53 +119,75 @@ const initializeTwitchClient = () => {
       }
     });
 
+    // Handle Subscription (Sub, Resub, and Gifts)
     client.on(
       "subscription",
       (channel, username, methods, message, userstate) => {
         if (!countdownEnded) {
-          handleSubscription(username, methods["plan"], "subscription");
+          handleSubscription(
+            username,
+            methods["plan"],
+            "subscription",
+            userstate
+          );
         }
       }
     );
 
+    // Handle Resubscriptions
     client.on(
       "resub",
       (channel, username, months, message, userstate, methods) => {
         if (!countdownEnded) {
-          handleSubscription(username, methods["plan"], "resub");
+          handleSubscription(username, methods["plan"], "resub", userstate);
         }
       }
     );
 
+    // Handle Sub Gifts
     client.on(
       "subgift",
       (channel, username, months, recipient, methods, userstate) => {
         if (!countdownEnded) {
-          handleSubscription(username, methods["plan"], "subgift");
+          handleSubscription(
+            username,
+            methods["plan"],
+            "subgift",
+            userstate,
+            months
+          );
         }
       }
     );
 
+    // Handle Cheer Events (Bits)
     client.on("cheer", (channel, userstate, message) => {
       if (!countdownEnded) {
-        if (userstate.bits >= config.generalTwitchConfig.min_amount_of_bits) {
+        if (userstate.bits >= config.generalConfig.min_amount_of_bits) {
           let times = Math.floor(
-            userstate.bits / config.generalTwitchConfig.min_amount_of_bits
+            userstate.bits / config.generalConfig.min_amount_of_bits
           );
           addTime(
             endingTime,
-            config.generalTwitchConfig.seconds_added_per_bits * times
+            config.generalConfig.seconds_added_per_bits * times
           );
           logMessage(
             "Twitch",
             `Added ${
-              config.generalTwitchConfig.seconds_added_per_bits * times
+              config.generalConfig.seconds_added_per_bits * times
             } Seconds Because ${userstate["display-name"]} Donated ${
               userstate.bits
             } Bits`
           );
-          if (!users.includes(userstate["display-name"])) {
-            users.push(userstate["display-name"]);
+
+          // Add user to the list if they donated bits
+          if (!users[userstate["display-name"]]) {
+            users[userstate["display-name"]] = {
+              bits: userstate.bits,
+              subs: {},
+              subgifts: {},
+              color: userstate.color ? userstate.color : "#FFFFFF",
+            };
           }
         }
       }
@@ -182,27 +198,30 @@ const initializeTwitchClient = () => {
   }
 };
 
-const handleSubscription = (username, plan, type) => {
+// Handle subscription, resub, and subgift logic
+const handleSubscription = (username, plan, type, userstate, months = 1) => {
   const subTimeConfig = {
     subscription: {
-      Prime: config.generalTwitchConfig.seconds_added_per_sub_prime,
-      1000: config.generalTwitchConfig.seconds_added_per_sub_tier1,
-      2000: config.generalTwitchConfig.seconds_added_per_sub_tier2,
-      3000: config.generalTwitchConfig.seconds_added_per_sub_tier3,
+      Prime: config.generalConfig.seconds_added_per_sub_prime,
+      1000: config.generalConfig.seconds_added_per_sub_tier1,
+      2000: config.generalConfig.seconds_added_per_sub_tier2,
+      3000: config.generalConfig.seconds_added_per_sub_tier3,
     },
     resub: {
-      Prime: config.generalTwitchConfig.seconds_added_per_resub_prime,
-      1000: config.generalTwitchConfig.seconds_added_per_resub_tier1,
-      2000: config.generalTwitchConfig.seconds_added_per_resub_tier2,
-      3000: config.generalTwitchConfig.seconds_added_per_resub_tier3,
+      Prime: config.generalConfig.seconds_added_per_resub_prime,
+      1000: config.generalConfig.seconds_added_per_resub_tier1,
+      2000: config.generalConfig.seconds_added_per_resub_tier2,
+      3000: config.generalConfig.seconds_added_per_resub_tier3,
     },
     subgift: {
-      Prime: config.generalTwitchConfig.seconds_added_per_giftsub_tier1,
-      1000: config.generalTwitchConfig.seconds_added_per_giftsub_tier1,
-      2000: config.generalTwitchConfig.seconds_added_per_giftsub_tier2,
-      3000: config.generalTwitchConfig.seconds_added_per_giftsub_tier3,
+      1000: config.generalConfig.seconds_added_per_giftsub_tier1,
+      2000: config.generalConfig.seconds_added_per_giftsub_tier2,
+      3000: config.generalConfig.seconds_added_per_giftsub_tier3,
     },
   };
+
+  // Treat Prime as Tier 1
+  if (plan === "Prime") plan = 1000;
 
   const seconds = subTimeConfig[type][plan] || 0;
 
@@ -211,11 +230,30 @@ const handleSubscription = (username, plan, type) => {
     logMessage(
       "Twitch",
       `Added ${seconds} Seconds Because ${username} ${
-        type === "subgift" ? "Gifted A" : ""
-      } Sub (${plan})`
+        type === "subgift" ? "Gifted A Sub" : "Subscribed"
+      } At (${plan})`
     );
-    if (!users.includes(username)) {
-      users.push(username);
+
+    // Ensure the user is tracked
+    if (!users[username]) {
+      users[username] = {
+        bits: 0,
+        subs: {}, // Unified subs tracking
+        color: userstate.color ? userstate.color : "#FFFFFF",
+      };
+    }
+
+    users[username].color = userstate.color ? userstate.color : "#FFFFFF";
+
+    // Increment subs count (gift or not) for the specific plan
+    if (!users[username].subs[plan]) {
+      users[username].subs[plan] = { count: 0, gifts: 0 };
+    }
+
+    if (type === "subgift") {
+      users[username].subs[plan].gifts += 1;
+    } else {
+      users[username].subs[plan].count += 1;
     }
   }
 };

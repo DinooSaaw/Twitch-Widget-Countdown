@@ -14,28 +14,32 @@ let endingTime;
 let countdownEnded = false;
 let CountdownPaused = false;
 let pauseStartTime = null;
-let users = {};
+let users = {}
 let time;
 
 // Save the ending time to localStorage
 const saveTimeToLocalStorage = () => {
   localStorage.setItem("endingTime", endingTime.toISOString());
+  localStorage.setItem("userData", users);
 };
 
 const initializeCountdown = () => {
   setInitialTheme();
   // Check if there's a saved ending time in localStorage
   const savedEndingTime = localStorage.getItem("endingTime");
+  const savedUserData = localStorage.getItem("userData");
 
   if (savedEndingTime) {
     // Parse the stored ending time and use it
     endingTime = new Date(savedEndingTime);
+    users = savedUserData
     if (endingTime <= new Date()) {
       logMessage(
         "Timer",
         "Saved ending time is in the past. Using default configuration."
       );
       localStorage.removeItem("endingTime"); // Clear invalid ending time
+      localStorage.removeItem("userData"); // Clear user data
       endingTime = new Date(Date.now());
       endingTime = timeFunc.addHours(
         endingTime,
@@ -190,6 +194,7 @@ const GetPauseState = async () => {
 // Reset the timer
 const resetTimer = () => {
   localStorage.removeItem("endingTime"); // Remove saved time from localStorage
+  localStorage.removeItem("userData"); // Remove saved user data from localStorage
   initializeCountdown(); // Reinitialize the timer
 };
 
@@ -269,4 +274,66 @@ const setInitialTheme = () => {
   } else {
     document.documentElement.setAttribute("data-theme", "light");
   }
+};
+
+const GenerateLeaderboardTable = () => {
+  if (Object.keys(users).length === 0) return console.log("No users"); // Check if there are no users
+  console.log(users);
+
+  const leaderboard = Object.entries(users).map(([username, data]) => {
+    // Sum all subs
+    const totalSubsCount = Object.values(data.subs || {}).reduce(
+      (acc, sub) => acc + sub.count + sub.gifts, // Add both count and gifts
+      0
+    );
+
+    // Sum all gifted subs
+    const totalGiftsCount = Object.values(data.subgifts || {}).reduce(
+      (acc, gifts) => acc + gifts,
+      0
+    );
+
+    const totalSubs = totalSubsCount + totalGiftsCount; // Total subs includes both subs and gifts
+
+    // Create a formatted string for sub details
+    let subDetails = "";
+    if (data.subs) {
+      const subTierDetails = Object.entries(data.subs)
+        .map(
+          ([tier, sub]) => `Subscribed At Tier ${tier / 1000}, Subscriptions, ${sub.gifts} Gifts`
+        )
+        .join(", ");
+      subDetails += subTierDetails;
+    }
+
+    if (data.subgifts) {
+      const giftTierDetails = Object.entries(data.subgifts)
+        .map(([tier, count]) => `Gifted ${count} Tier ${tier / 1000}`)
+        .join(", ");
+      subDetails += subDetails && giftTierDetails ? " | " : ""; // Separate subs and gifts if both exist
+      subDetails += giftTierDetails;
+    }
+
+    return {
+      username,
+      bits: data.bits || 0,
+      totalSubs,
+      subDetails,
+      color: data.color || "#FFFFFF", // Default to white if undefined
+    };
+  });
+
+  // Sort the leaderboard by total subscriptions (subs + gifts) in descending order
+  leaderboard.sort((a, b) => b.totalSubs - a.totalSubs);
+  console.log(leaderboard);
+
+  // Display the leaderboard in the console
+  console.table(
+    leaderboard.map((user) => ({
+      Username: user.username,
+      Bits: Number(user.bits),
+      "Total Subs": user.totalSubs,
+      "Sub Details": user.subDetails,
+    }))
+  );
 };
