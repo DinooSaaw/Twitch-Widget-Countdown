@@ -90,7 +90,9 @@ const getNextTime = () => {
     time = "00:00:00";
     onCountdownEnd();
   }
+  if(CountdownPaused) return
   timeText.innerText = time;
+  return time
 };
 
 let countdownUpdater;
@@ -177,26 +179,31 @@ const PauseCountdown = async () => {
     // Resume: Calculate the pause duration and add it to endingTime
     let pauseDuration = Date.now() - pauseStartTime;
     endingTime = new Date(endingTime.getTime() + pauseDuration);
+
+    timeText.classList.remove("paused");
+    timeText.classList.add("resumed");
+
   } else {
     // Pause: Record the time when the countdown was paused
     pauseStartTime = Date.now();
+
+    timeText.classList.remove("resumed");
+    timeText.classList.add("paused")
   }
   CountdownPaused = !CountdownPaused;
-};
-
-// Get the pause state
-const GetPauseState = async () => {
-  return CountdownPaused;
+  return CountdownPaused
 };
 
 // Reset the timer
 const resetTimer = () => {
   localStorage.removeItem("endingTime"); // Remove saved time from localStorage
   initializeCountdown(); // Reinitialize the timer
+  return "Timer has been reset"
 };
 
 // Handle when the countdown ends
 const onCountdownEnd = () => {
+  if(countdownEnded) return;
   logMessage("Timer", "Timer has ended");
   timeText.style.color = "green";
 
@@ -292,37 +299,16 @@ const GenerateLeaderboardTable = () => {
 
     const totalSubs = totalSubsCount + totalGiftsCount; // Total subs includes both subs and gifts
 
-    // Create a formatted string for sub details
-    let subDetails = "";
-    if (data.subs) {
-      const subTierDetails = Object.entries(data.subs)
-        .map(
-          ([tier, sub]) => `Subscribed At Tier ${tier / 1000}, Subscriptions, ${sub.gifts} Gifts`
-        )
-        .join(", ");
-      subDetails += subTierDetails;
-    }
-
-    if (data.subgifts) {
-      const giftTierDetails = Object.entries(data.subgifts)
-        .map(([tier, count]) => `Gifted ${count} Tier ${tier / 1000}`)
-        .join(", ");
-      subDetails += subDetails && giftTierDetails ? " | " : ""; // Separate subs and gifts if both exist
-      subDetails += giftTierDetails;
-    }
-
     return {
       username,
       bits: data.bits || 0,
       totalSubs,
-      subDetails,
       color: data.color || "#FFFFFF", // Default to white if undefined
     };
   });
 
   // Sort the leaderboard by total subscriptions (subs + gifts) in descending order
   leaderboard.sort((a, b) => b.totalSubs - a.totalSubs);
-  console.log(leaderboard);
 
   // Display the leaderboard in the console
   console.table(
@@ -330,7 +316,8 @@ const GenerateLeaderboardTable = () => {
       Username: user.username,
       Bits: Number(user.bits),
       "Total Subs": user.totalSubs,
-      "Sub Details": user.subDetails,
     }))
   );
+
+  return leaderboard;
 };

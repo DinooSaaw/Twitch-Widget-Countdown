@@ -20,7 +20,7 @@ const initializeTwitchClient = () => {
     client.connect();
     logMessage(
       "Twitch",
-      `Client Connected to ${config.loginData.twitch_channel_name} with prefix ${config.generalConfig["twitch_command_prefix"]}`
+      `Client Connected to "${config.loginData.twitch_channel_name}" with prefix "${config.generalConfig["twitch_command_prefix"]}"`
     );
 
     client.on("message", async (channel, tags, message, self) => {
@@ -37,8 +37,8 @@ const initializeTwitchClient = () => {
         case "pause":
           if (countdownEnded) return
           if (isMod) {
-            PauseCountdown();
-            let pauseState = await GetPauseState();
+            
+            let pauseState = await PauseCountdown();
             if (pauseState) {
               logMessage(
                 "Twitch",
@@ -78,6 +78,7 @@ const initializeTwitchClient = () => {
             logMessage("Twitch", `Only Moderators Can Pause The Countdown`);
           }
           break;
+
         case "add":
           if (countdownEnded) return
           if (isMod) {
@@ -97,6 +98,7 @@ const initializeTwitchClient = () => {
             logMessage("Twitch", `Only Moderators Can Add Time`);
           }
           break;
+
         case "remove":
           if (countdownEnded) return
           if (isMod) {
@@ -116,6 +118,7 @@ const initializeTwitchClient = () => {
             logMessage("Twitch", `Only Moderators Can Remove Time`);
           }
           break;
+
       }
     });
 
