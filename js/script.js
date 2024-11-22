@@ -20,19 +20,16 @@ let time;
 // Save the ending time to localStorage
 const saveTimeToLocalStorage = () => {
   localStorage.setItem("endingTime", endingTime.toISOString());
-  localStorage.setItem("userData", users);
 };
 
 const initializeCountdown = () => {
   setInitialTheme();
   // Check if there's a saved ending time in localStorage
   const savedEndingTime = localStorage.getItem("endingTime");
-  const savedUserData = localStorage.getItem("userData");
 
   if (savedEndingTime) {
     // Parse the stored ending time and use it
     endingTime = new Date(savedEndingTime);
-    if (savedUserData) users = savedUserData
     
     if (endingTime <= new Date()) {
       logMessage(
@@ -195,7 +192,6 @@ const GetPauseState = async () => {
 // Reset the timer
 const resetTimer = () => {
   localStorage.removeItem("endingTime"); // Remove saved time from localStorage
-  localStorage.removeItem("userData"); // Remove saved user data from localStorage
   initializeCountdown(); // Reinitialize the timer
 };
 
