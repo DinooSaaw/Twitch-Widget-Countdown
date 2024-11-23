@@ -67,6 +67,7 @@ canvas {
 
 /* Theme Toggle Switch */
 .switch {
+  display: none;
   position: absolute;
   top: 20px;
   right: 20px;
@@ -81,6 +82,7 @@ canvas {
   transition: background-color 0.3s ease;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   padding: 2px; /* Added padding to ensure the circle stays within the bounds */
+  
 }
 
 .switch::after {

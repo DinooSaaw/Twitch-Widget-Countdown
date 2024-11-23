@@ -24,6 +24,13 @@ const saveTimeToLocalStorage = () => {
 
 const initializeCountdown = () => {
   setInitialTheme();
+  if(config.theme.showSlider) {
+    let slider = document.getElementById("themeToggle")
+    slider.style.display = "block"
+  } else {
+    let slider = document.getElementById("themeToggle")
+    slider.style.display = "none" 
+  }
   // Check if there's a saved ending time in localStorage
   const savedEndingTime = localStorage.getItem("endingTime");
 

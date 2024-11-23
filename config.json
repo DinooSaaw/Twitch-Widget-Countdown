@@ -31,7 +31,8 @@
       "seconds_added_per_bits": 30
     },
     "theme":{
-      "prefersDark": false
+      "prefersDark": false,
+      "showSlider": false
     },
     "donationConfig": {
       "min_donation_amount": 5,
