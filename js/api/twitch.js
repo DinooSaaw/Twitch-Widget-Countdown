@@ -119,6 +119,19 @@ const initializeTwitchClient = () => {
           }
           break;
 
+          case "powerhour":
+          if (countdownEnded) return
+          if (isMod) {
+              PowerHour()
+              logMessage(
+                "Twitch",
+                `Toggled Power Hour Because ${displayName} Requested It `
+              );
+          } else {
+            logMessage("Twitch", `Only Moderators Can Remove Time`);
+          }
+          break;
+
       }
     });
 

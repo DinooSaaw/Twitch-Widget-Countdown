@@ -178,3 +178,42 @@ canvas {
     opacity: 1;
   }
 }
+#timeText {
+  animation: "color-change 5s linear infinite";
+}
+
+@keyframes color-change {
+  0% {
+    color: blue;
+  }
+  10% {
+    color: #8e44ad;  /* Purple */
+  }
+  20% {
+    color: #1abc9c;  /* Turquoise */
+  }
+  30% {
+    color: #d35400;  /* Orange */
+  }
+  40% {
+    color: blue;
+  }
+  50% {
+    color: #34495e;  /* Dark Grey */
+  }
+  60% {
+    color: blue;
+  }
+  70% {
+    color: #2980b9;  /* Bright Blue */
+  }
+  80% {
+    color: #f1c40f;  /* Yellow */
+  }
+  90% {
+    color: #2980b9;  /* Bright Blue again */
+  }
+  100% {
+    color: pink;
+  }
+}

@@ -14,6 +14,7 @@ let endingTime;
 let countdownEnded = false;
 let CountdownPaused = false;
 let pauseStartTime = null;
+let PowerHourState = false;
 let users = {}
 let time;
 
@@ -34,7 +35,7 @@ const initializeCountdown = () => {
   // Check if there's a saved ending time in localStorage
   const savedEndingTime = localStorage.getItem("endingTime");
 
-  if (savedEndingTime) {
+  if (savedEndingTime && config.generalConfig.persistenceTimer) {
     // Parse the stored ending time and use it
     endingTime = new Date(savedEndingTime);
     
@@ -95,6 +96,7 @@ const getNextTime = () => {
     clearInterval(countdownUpdater);
     countdownEnded = true;
     time = "00:00:00";
+    logMessage("Timer", "Has Finished")
     onCountdownEnd();
   }
   if(CountdownPaused) return
@@ -210,7 +212,8 @@ const resetTimer = () => {
 
 // Handle when the countdown ends
 const onCountdownEnd = () => {
-  if(countdownEnded) return;
+  console.log("🚀 ~ onCountdownEnd ~ countdownEnded:", countdownEnded)
+  if(!countdownEnded) return;
   logMessage("Timer", "Timer has ended");
   timeText.style.color = "green";
 
@@ -328,3 +331,57 @@ const GenerateLeaderboardTable = () => {
 
   return leaderboard;
 };
+
+let powerHourTimeout;  // Variable to hold the timeout reference
+
+const PowerHour = () => {
+  PowerHourState = !PowerHourState;  // Toggle state
+
+  if (PowerHourState) {
+    // Set a timeout to end PowerHour after 1 hour (3600000 ms)
+    powerHourTimeout = setTimeout(() => {
+      PowerHour();  // This will toggle the state back to inactive
+      console.log("PowerHour Ended!");
+    }, 1 * 60 * 60 * 1000); // 1 hour in milliseconds
+    
+    // Apply an animation for color change when PowerHour is active
+    timeText.style.animation = 'color-change 10s linear infinite';  // Animate the text color
+    
+    // Adjust the config values when PowerHour is active
+    config.generalConfig["seconds_added_per_sub_prime"] *= 2;
+    config.generalConfig["seconds_added_per_sub_tier1"] *= 2;
+    config.generalConfig["seconds_added_per_sub_tier2"] *= 2;
+    config.generalConfig["seconds_added_per_sub_tier3"] *= 2;
+
+    config.generalConfig["seconds_added_per_resub_prime"] *= 2;
+    config.generalConfig["seconds_added_per_resub_tier1"] *= 2;
+    config.generalConfig["seconds_added_per_resub_tier2"] *= 2;
+    config.generalConfig["seconds_added_per_resub_tier3"] *= 2;
+
+    config.generalConfig["seconds_added_per_giftsub_tier1"] *= 2;
+    config.generalConfig["seconds_added_per_giftsub_tier2"] *= 2;
+    config.generalConfig["seconds_added_per_giftsub_tier3"] *= 2;
+
+  } else {
+    // Clear the timeout when PowerHour is turned off
+    clearTimeout(powerHourTimeout);
+
+    timeText.style.color = '';  // Reset to the default color
+    timeText.style.animation = '';  // Remove the animation
+
+    // Reset config values when PowerHour is inactive
+    config.generalConfig["seconds_added_per_sub_prime"] /= 2;
+    config.generalConfig["seconds_added_per_sub_tier1"] /= 2;
+    config.generalConfig["seconds_added_per_sub_tier2"] /= 2;
+    config.generalConfig["seconds_added_per_sub_tier3"] /= 2;
+
+    config.generalConfig["seconds_added_per_resub_prime"] /= 2;
+    config.generalConfig["seconds_added_per_resub_tier1"] /= 2;
+    config.generalConfig["seconds_added_per_resub_tier2"] /= 2;
+    config.generalConfig["seconds_added_per_resub_tier3"] /= 2;
+
+    config.generalConfig["seconds_added_per_giftsub_tier1"] /= 2;
+    config.generalConfig["seconds_added_per_giftsub_tier2"] /= 2;
+    config.generalConfig["seconds_added_per_giftsub_tier3"] /= 2;
+  }
+}
