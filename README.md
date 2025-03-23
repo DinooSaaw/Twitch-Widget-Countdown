@@ -1,5 +1,5 @@
 
-# Twitch Countdown
+# Twitch Countdown Widget
 
 This countdown timer was created based on JayexDesigns' template.
 
